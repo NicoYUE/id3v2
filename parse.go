@@ -38,11 +38,12 @@ func (tag *Tag) parse(rd io.Reader, opts Options) error {
 	if err != nil {
 		return fmt.Errorf("error by parsing tag header: %v", err)
 	}
-	if header.Version < 3 {
-		return ErrUnsupportedVersion
-	}
 
-	tag.init(rd, tagHeaderSize+header.FramesSize, header.Version)
+	if header.Version < 3 {
+		tag.init(rd, 0, 4)
+	} else {
+		tag.init(rd, tagHeaderSize+header.FramesSize, header.Version)
+	}
 	if !opts.Parse {
 		return nil
 	}
